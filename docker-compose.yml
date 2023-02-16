@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  mikrotik:
+    image: evilfreelancer/docker-routeros
+    restart: unless-stopped
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    ports:
+      - "8080:80"
+      - "18728:8728"
+      - "18729:8729"
+    
+  portainer:
+    image: portainer/portainer-ce:2.17.0-alpine
+    restart: unless-stopped
+    ports:
+      - "8081:8000"
+      - "9000:9000"
+    volumes:
+      - portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  portainer-data:
