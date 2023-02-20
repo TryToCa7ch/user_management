@@ -18,7 +18,7 @@ class Mikrotik_helper:
         get = api.get_resource('/ppp/secret').get(name=username)
         if get:
             return list(get)
-        else:y
+        else:
             raise ValueError("There's no secret record ")
 
     def add_secret(self, username: str, password: str, service:str ='l2tp', profile: str ='default') -> list:
@@ -27,5 +27,3 @@ class Mikrotik_helper:
         return self.get_secret_by_name(username)
         
 
-worker = Mikrotik_helper()
-print(worker.add_secret(username='test7', password='', service='l2tp', profile='default'))

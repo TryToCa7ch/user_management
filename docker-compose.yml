@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mikrotik:
-    image: evilfreelancer/docker-routeros
+    image: evilfreelancer/docker-routeros:6.48.1
     restart: unless-stopped
     privileged: true
     cap_add:
@@ -13,6 +13,8 @@ services:
       - "8080:80"
       - "18728:8728"
       - "18729:8729"
+    volumes:
+      - mikrotik-data:/routeros
     
   portainer:
     image: portainer/portainer-ce:2.17.0-alpine
@@ -24,5 +26,18 @@ services:
       - portainer-data:/data
       - /var/run/docker.sock:/var/run/docker.sock
 
+  postgres:
+    image: postgres:15.2-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: test_pass
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/potsgresql/data
+
 volumes:
   portainer-data:
+  postgres-data:
+  mikrotik-data:
