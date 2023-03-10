@@ -3,9 +3,9 @@ from typing import Optional
 
 class MikrotikUserBase(BaseModel):
     username: str
+    user_id: int
 
 class MikrotikUserCreate(MikrotikUserBase):
-    user_id: int
     password: str
 
 class MikrotikUser(MikrotikUserBase):
@@ -18,6 +18,7 @@ class MikrotikUser(MikrotikUserBase):
 class PortainerUserBase(BaseModel):
     username: str
     role: int
+    user_id: int
 
 class PortainerUserCreate(PortainerUserBase):
     password: str

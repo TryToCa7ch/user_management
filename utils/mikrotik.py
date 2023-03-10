@@ -1,6 +1,6 @@
 import routeros_api
 
-class Mikrotik_helper:
+class MikrotikHelper:
     def __init__(self):
         self.host = 'localhost'
         self.port = 18728

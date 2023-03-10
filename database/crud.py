@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 
-from utils import Mikrotik_helper
+from utils import MikrotikHelper
+from utils import PortainerHelper
 
 
 def get_user(db: Session, user_id: int):
@@ -31,10 +32,27 @@ def get_mikrotik_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_mikrotik_user(db: Session, item: schemas.MikrotikUserCreate, user_id: int):
-    db_item = models.Mikrotik_user(username=item.username, password=item.password, user_id=item.user_id)
+    fake_hashed_password = item.password + "notreallyhashed"
+    db_item = models.Mikrotik_user(username=item.username, hashed_password=fake_hashed_password, user_id=item.user_id)
     db.add(db_item)  
-    mh = Mikrotik_helper()
+    mh = MikrotikHelper()
     mh.add_secret(username=item.username, password=item.password)
     db.commit()
     db.refresh(db_item)  
+    return db_item
+
+def get_portainer_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Portainer_user).offset(skip).limit(limit).all()
+
+def create_portainer_user(db: Session, item: schemas.PortainerUserCreate):
+    fake_hashed_password = item.password + "notreallyhashed"
+    db_item = models.Portainer_user(username=item.username, hashed_password=fake_hashed_password, user_id=item.user_id, role=item.role, is_active=True)
+    db.add(db_item)
+    ph = PortainerHelper()
+    try:
+        ph.add_user(username=item.username, password=item.password, role=item.role)
+    except:
+        raise Exception
+    db.commit()
+    db.refresh(db_item)
     return db_item

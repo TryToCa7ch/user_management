@@ -4,7 +4,7 @@ class PortainerHelper():
     def __init__(self):
         self.host = 'http://localhost:9000'
         # self.token = self.get_creds(f'{self.host}/api/auth', 'admin', 'asd1asd2')
-        self.headers = {"X-Api-Key": "ptr_VxDh3ET4HmtNa+1OHTqC6Adst3lhmQtFZSRmektWbHI="}
+        self.headers = {"X-Api-Key": "ptr_B0B35M1o8fAZaW0yE3tGELRXWv40g6W9FM80GPKy7AI="}
 
     # def get_creds(self, url, user, password):
     #     self.url = url
@@ -33,14 +33,12 @@ class PortainerHelper():
         url = f'{self.host}/api/users'
         body = {"username": username, "password": password, "role": role}
         req = requests.post(url, json = body, headers = self.headers)
-        return req.json()
+        if req.status_code != 200:
+            raise Exception(req.json())
+        else:
+            return req.json()
 
     def del_user(self, id: int):
         url = f'{self.host}/api/users/{id}'
         req = requests.delete(url, headers = self.headers)
         return req.status_code
-
-p = PortainerHelper()
-# print(p.add_user("test","test", 2))
-print(p.del_user(5))
-# print(p.get_users())
