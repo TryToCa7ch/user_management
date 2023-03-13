@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import RequestException
 
 class PortainerHelper():
     def __init__(self):
@@ -42,3 +43,12 @@ class PortainerHelper():
         url = f'{self.host}/api/users/{id}'
         req = requests.delete(url, headers = self.headers)
         return req.status_code
+
+    def update_user(self, id: int, username: str, password: str, role: int):
+        url = f'{self.host}/api/users'
+        body = {"username": username, "password": password, "role": role}
+        req = requests.put(url, json = body, headers = self.headers)
+        if req.status_code != 200:
+            raise RequestException
+        else:
+            req.json()

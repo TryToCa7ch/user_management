@@ -30,6 +30,9 @@ class PortainerUser(PortainerUserBase):
     class Config:
         orm_mode = True
 
+class PortainerUserUpdate(PortainerUserBase):
+    id: int
+
 class UserBase(BaseModel):
     full_name: str
     email: str

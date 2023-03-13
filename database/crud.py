@@ -4,6 +4,7 @@ from . import models, schemas
 
 from utils import MikrotikHelper
 from utils import PortainerHelper
+from requests.exceptions import RequestException
 
 
 def get_user(db: Session, user_id: int):
@@ -38,7 +39,7 @@ def create_mikrotik_user(db: Session, item: schemas.MikrotikUserCreate, user_id:
     mh = MikrotikHelper()
     mh.add_secret(username=item.username, password=item.password)
     db.commit()
-    db.refresh(db_item)  
+    db.refresh(db_item)
     return db_item
 
 def get_portainer_users(db: Session, skip: int = 0, limit: int = 100):
@@ -53,6 +54,19 @@ def create_portainer_user(db: Session, item: schemas.PortainerUserCreate):
         ph.add_user(username=item.username, password=item.password, role=item.role)
     except:
         raise Exception
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+def update_portainer_user(db: Session, id: int, item: schemas.PortainerUser):
+    item.password = item.password + "notreallyhashed"
+    db_item = models.Portainer_user.filter(models.Portainer_user.user_id == item.user_id).update(models.Portainer_user).values(item.json())
+    db.add(db_item)
+    ph = PortainerHelper()
+    try:
+        ph.update_user(id=id, username=item.username, password=item.password, role=item.role)
+    except RequestException:
+        raise RequestException
     db.commit()
     db.refresh(db_item)
     return db_item

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database import crud, models, schemas
 from database.database import SessionLocal, engine
 
-from pydantic.error_wrappers import ValidationError
+from requests.exceptions import RequestException
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -71,3 +71,13 @@ def create_portainer_user_for_user(
         return db_item
     except:
         raise HTTPException(status_code=400, detail='Password does not meet the requirements')
+
+@app.put("/users/{user_id}/portainer_user/", response_model=schemas.PortainerUser)
+def update_portainer_user_for_user(
+    user_id: int, item: schemas.PortainerUserUpdate, db: Session = Depends(get_db)
+):
+    try:
+        db_item = crud.update_portainer_user(db=db, id=item.id, item=item)
+        return db_item
+    except RequestException as err:
+        raise HTTPException(status_code=400, detail=err)
