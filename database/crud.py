@@ -21,7 +21,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, full_name = user.full_name, hashed_password=fake_hashed_password)
+    db_user = models.User(email=user.email, full_name=user.full_name, hashed_password=fake_hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -35,32 +35,39 @@ def get_mikrotik_users(db: Session, skip: int = 0, limit: int = 100):
 def create_mikrotik_user(db: Session, item: schemas.MikrotikUserCreate, user_id: int):
     fake_hashed_password = item.password + "notreallyhashed"
     db_item = models.Mikrotik_user(username=item.username, hashed_password=fake_hashed_password, user_id=item.user_id)
-    db.add(db_item)  
+    db.add(db_item)
     mh = MikrotikHelper()
     mh.add_secret(username=item.username, password=item.password)
     db.commit()
     db.refresh(db_item)
     return db_item
 
+
 def get_portainer_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Portainer_user).offset(skip).limit(limit).all()
 
+
 def create_portainer_user(db: Session, item: schemas.PortainerUserCreate):
     fake_hashed_password = item.password + "notreallyhashed"
-    db_item = models.Portainer_user(username=item.username, hashed_password=fake_hashed_password, user_id=item.user_id, role=item.role, is_active=True)
+    db_item = models.Portainer_user(username=item.username,
+                                    hashed_password=fake_hashed_password,
+                                    user_id=item.user_id, role=item.role,
+                                    is_active=True)
     db.add(db_item)
     ph = PortainerHelper()
     try:
         ph.add_user(username=item.username, password=item.password, role=item.role)
-    except:
+    except Exception:
         raise Exception
     db.commit()
     db.refresh(db_item)
     return db_item
 
+
 def update_portainer_user(db: Session, id: int, item: schemas.PortainerUser):
     item.password = item.password + "notreallyhashed"
-    db_item = models.Portainer_user.filter(models.Portainer_user.user_id == item.user_id).update(models.Portainer_user).values(item.json())
+    db_item = models.Portainer_user.filter(models.Portainer_user.user_id == item.user_id)\
+        .update(models.Portainer_user).values(item.json())
     db.add(db_item)
     ph = PortainerHelper()
     try:

@@ -1,5 +1,6 @@
 import routeros_api
 
+
 class MikrotikHelper:
     def __init__(self):
         self.host = 'localhost'

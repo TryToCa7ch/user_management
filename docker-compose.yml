@@ -1,6 +1,13 @@
 version: "3.8"
 
 services:
+  service:
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/code
+
   mikrotik:
     image: evilfreelancer/docker-routeros:6.48.1
     restart: unless-stopped
@@ -15,7 +22,7 @@ services:
       - "18729:8729"
     volumes:
       - mikrotik-data:/routeros
-    
+
   portainer:
     image: portainer/portainer-ce:2.17.0-alpine
     restart: unless-stopped

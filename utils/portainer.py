@@ -1,6 +1,7 @@
 import requests
 from requests.exceptions import RequestException
 
+
 class PortainerHelper():
     def __init__(self):
         self.host = 'http://localhost:9000'
@@ -15,25 +16,26 @@ class PortainerHelper():
 
     def get_users(self):
         url = f'{self.host}/api/users'
-        req = requests.get(url, headers = self.headers)
+        req = requests.get(url, headers=self.headers)
         return req.json()
-    
+
     def get_user_by_id(self, id: int):
         url = f'{self.host}/api/users/{id}'
-        req = requests.get(url, headers = self.headers)
+        req = requests.get(url, headers=self.headers)
+        return req.json()
 
     def get_roles(self):
         url = f'{self.host}/api/roles'
-        req = requests.get(url, headers = self.headers)
+        req = requests.get(url, headers=self.headers)
         roles = []
         for role in req.json():
             roles += [{"ID": role["Id"]}, {"Name": role["Name"]}]
         return roles
 
-    def add_user(self, username: str, password: str, role: int = 2 ):
+    def add_user(self, username: str, password: str, role: int = 2):
         url = f'{self.host}/api/users'
         body = {"username": username, "password": password, "role": role}
-        req = requests.post(url, json = body, headers = self.headers)
+        req = requests.post(url, json=body, headers=self.headers)
         if req.status_code != 200:
             raise Exception(req.json())
         else:
@@ -41,13 +43,13 @@ class PortainerHelper():
 
     def del_user(self, id: int):
         url = f'{self.host}/api/users/{id}'
-        req = requests.delete(url, headers = self.headers)
+        req = requests.delete(url, headers=self.headers)
         return req.status_code
 
     def update_user(self, id: int, username: str, password: str, role: int):
         url = f'{self.host}/api/users'
         body = {"username": username, "password": password, "role": role}
-        req = requests.put(url, json = body, headers = self.headers)
+        req = requests.put(url, json=body, headers=self.headers)
         if req.status_code != 200:
             raise RequestException
         else:

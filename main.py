@@ -24,6 +24,7 @@ def get_db():
 def main_page():
     return "Main page"
 
+
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
@@ -58,9 +59,11 @@ def get_mikrotik_users(skip: int = 0, limit: int = 100, db: Session = Depends(ge
     items = crud.get_mikrotik_users(db, skip=skip, limit=limit)
     return items
 
+
 @app.get("/portainer_users/", response_model=list[schemas.PortainerUser])
 def get_portainer_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_portainer_users(db, skip=skip, limit=limit)
+
 
 @app.post("/users/{user_id}/portainer_user/", response_model=schemas.PortainerUser)
 def create_portainer_user_for_user(
@@ -69,8 +72,9 @@ def create_portainer_user_for_user(
     try:
         db_item = crud.create_portainer_user(db=db, item=item)
         return db_item
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail='Password does not meet the requirements')
+
 
 @app.put("/users/{user_id}/portainer_user/", response_model=schemas.PortainerUser)
 def update_portainer_user_for_user(
