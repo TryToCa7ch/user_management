@@ -1,18 +1,12 @@
 import requests
-from requests.exceptions import RequestException
+
+from config import PORTAINER_API_HOST, PORTAINER_API_KEY
 
 
 class PortainerHelper():
     def __init__(self):
-        self.host = 'http://localhost:9000'
-        # self.token = self.get_creds(f'{self.host}/api/auth', 'admin', 'asd1asd2')
-        self.headers = {"X-Api-Key": "ptr_B0B35M1o8fAZaW0yE3tGELRXWv40g6W9FM80GPKy7AI="}
-
-    # def get_creds(self, url, user, password):
-    #     self.url = url
-    #     body = {"username": user, "password": password}
-    #     req = requests.post(url, json = body)
-    #     return req.json()['jwt']
+        self.host = PORTAINER_API_HOST
+        self.headers = {f"X-Api-Key: {PORTAINER_API_KEY}"}
 
     def get_users(self):
         url = f'{self.host}/api/users'
@@ -35,11 +29,9 @@ class PortainerHelper():
     def add_user(self, username: str, password: str, role: int = 2):
         url = f'{self.host}/api/users'
         body = {"username": username, "password": password, "role": role}
-        req = requests.post(url, json=body, headers=self.headers)
-        if req.status_code != 200:
-            raise Exception(req.json())
-        else:
-            return req.json()
+        response = requests.post(url, json=body, headers=self.headers)
+        response.raise_for_status()
+        return response.json()
 
     def del_user(self, id: int):
         url = f'{self.host}/api/users/{id}'
@@ -49,8 +41,6 @@ class PortainerHelper():
     def update_user(self, id: int, username: str, password: str, role: int):
         url = f'{self.host}/api/users'
         body = {"username": username, "password": password, "role": role}
-        req = requests.put(url, json=body, headers=self.headers)
-        if req.status_code != 200:
-            raise RequestException
-        else:
-            req.json()
+        response = requests.put(url, json=body, headers=self.headers)
+        response.raise_for_status()
+        return response.json()

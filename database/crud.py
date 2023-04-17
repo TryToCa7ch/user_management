@@ -4,7 +4,7 @@ from . import models, schemas
 
 from utils import MikrotikHelper
 from utils import PortainerHelper
-from requests.exceptions import RequestException
+from requests.exceptions import HTTPError
 
 
 def get_user(db: Session, user_id: int):
@@ -57,8 +57,9 @@ def create_portainer_user(db: Session, item: schemas.PortainerUserCreate):
     ph = PortainerHelper()
     try:
         ph.add_user(username=item.username, password=item.password, role=item.role)
-    except Exception:
-        raise Exception
+    except HTTPError:
+        db.rollback()
+        raise
     db.commit()
     db.refresh(db_item)
     return db_item
@@ -72,8 +73,8 @@ def update_portainer_user(db: Session, id: int, item: schemas.PortainerUser):
     ph = PortainerHelper()
     try:
         ph.update_user(id=id, username=item.username, password=item.password, role=item.role)
-    except RequestException:
-        raise RequestException
+    except HTTPError:
+        raise
     db.commit()
     db.refresh(db_item)
     return db_item

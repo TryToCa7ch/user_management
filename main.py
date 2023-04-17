@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database import crud, models, schemas
 from database.database import SessionLocal, engine
 
-from requests.exceptions import RequestException
+from requests.exceptions import HTTPError
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -72,8 +72,8 @@ def create_portainer_user_for_user(
     try:
         db_item = crud.create_portainer_user(db=db, item=item)
         return db_item
-    except Exception:
-        raise HTTPException(status_code=400, detail='Password does not meet the requirements')
+    except HTTPError:
+        raise
 
 
 @app.put("/users/{user_id}/portainer_user/", response_model=schemas.PortainerUser)
@@ -83,5 +83,5 @@ def update_portainer_user_for_user(
     try:
         db_item = crud.update_portainer_user(db=db, id=item.id, item=item)
         return db_item
-    except RequestException as err:
-        raise HTTPException(status_code=400, detail=err)
+    except HTTPError:
+        raise
