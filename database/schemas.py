@@ -47,12 +47,16 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    department: Optional[str]
+    position: Optional[str]
+
     password: str
 
 
 class User(UserBase):
     id: int
     is_active: bool
+
     mikrotik_user: Optional[MikrotikUser]
     portainer_user: Optional[PortainerUser]
 

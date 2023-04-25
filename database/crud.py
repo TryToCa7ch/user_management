@@ -21,7 +21,11 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, full_name=user.full_name, hashed_password=fake_hashed_password)
+    db_user = models.User(email=user.email,
+                          full_name=user.full_name,
+                          hashed_password=fake_hashed_password,
+                          department=user.department,
+                          position=user.position)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -34,7 +38,9 @@ def get_mikrotik_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_mikrotik_user(db: Session, item: schemas.MikrotikUserCreate, user_id: int):
     fake_hashed_password = item.password + "notreallyhashed"
-    db_item = models.Mikrotik_user(username=item.username, hashed_password=fake_hashed_password, user_id=item.user_id)
+    db_item = models.Mikrotik_user(username=item.username,
+                                   hashed_password=fake_hashed_password,
+                                   user_id=item.user_id)
     db.add(db_item)
     mh = MikrotikHelper()
     mh.add_secret(username=item.username, password=item.password)
@@ -51,7 +57,8 @@ def create_portainer_user(db: Session, item: schemas.PortainerUserCreate):
     fake_hashed_password = item.password + "notreallyhashed"
     db_item = models.Portainer_user(username=item.username,
                                     hashed_password=fake_hashed_password,
-                                    user_id=item.user_id, role=item.role,
+                                    user_id=item.user_id,
+                                    role=item.role,
                                     is_active=True)
     db.add(db_item)
     ph = PortainerHelper()
@@ -72,7 +79,10 @@ def update_portainer_user(db: Session, id: int, item: schemas.PortainerUser):
     db.add(db_item)
     ph = PortainerHelper()
     try:
-        ph.update_user(id=id, username=item.username, password=item.password, role=item.role)
+        ph.update_user(id=id,
+                       username=item.username,
+                       password=item.password,
+                       role=item.role)
     except HTTPError:
         raise
     db.commit()

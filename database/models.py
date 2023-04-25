@@ -37,6 +37,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    department = Column(String)
+    position = Column(String)
 
     mikrotik_user = relationship("Mikrotik_user", back_populates="main_user", uselist=False)
 
